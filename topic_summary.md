@@ -237,23 +237,28 @@ where $\tilde{\mu}(x_t, x_0)$ is the weighted average of the current noisy versi
 
 As both $q(x_{t-1}|x_t, x_0)$ and $p_{\theta}(x_{t-1}|x_t)$ are Gaussian distributions, we can calculate the KL divergence between them analytically:
 
-$$D_{KL}(q(x_{t-1}|x_t, x_0)||p_{\theta}(x_{t-1}|x_t)) = E_q[\frac{1}{2\sigma_t^2}||\tilde{\mu}_{t}(x_t, x_0) - \mu_{\theta}(x_t,t)||^2] + C$$
+```math
+D_{KL}(q(x_{t-1}|x_t, x_0)||p_{\theta}(x_{t-1}|x_t)) = E_q[\frac{1}{2\sigma_t^2}||\tilde{\mu}_{t}(x_t, x_0) - \mu_{\theta}(x_t,t)||^2] + C
+```
 
 Where C is a constant term that does not depend on the model parameters, and $\tilde{\mu}_{t}(x_t, x_0)$ is the weighted average of the current noisy version and the original version, which is calculated as:
-
-$$\tilde{\mu}_{t}(x_t, x_0) = \frac{\sqrt{\bar{\alpha}_t}x_0 * \beta_t}{1 - \bar{\alpha}_t}x_0 + \frac{\sqrt{1 - \beta_t}(1 - \bar{\alpha}_{t-1})}{1 - \bar{\alpha}_t}x_t$$
-
+```math
+\tilde{\mu}_{t}(x_t, x_0) = \frac{\sqrt{\bar{\alpha}_t}x_0 * \beta_t}{1 - \bar{\alpha}_t}x_0 + \frac{\sqrt{1 - \beta_t}(1 - \bar{\alpha}_{t-1})}{1 - \bar{\alpha}_t}x_t
+```
 Normally, we would like to optimize this as is, as this is the most straight-forward way. However, [1] has some better ideas. Since $x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1 - \bar{\alpha}_t}\epsilon$, we can simplify the equation as:
 
-$$\tilde{\mu}_{t}(x_t, x_0) = \frac{1}{\sqrt{1 - \beta_t}}(x_t - \frac{\beta_t}{\sqrt{1 - \bar{\alpha}_t}} \epsilon)$$
-
+```math
+\tilde{\mu}_{t}(x_t, x_0) = \frac{1}{\sqrt{1 - \beta_t}}(x_t - \frac{\beta_t}{\sqrt{1 - \bar{\alpha}_t}} \epsilon)
+```
 So, in another sense, we are substracting a scaled version of the noise ($\epsilon$) from the current noisy version to obtain the mean.
 
 <!-- $$\tilde{\beta}_{t} = \frac{1 - \bar{\alpha}_{t-1}}{1 - \bar{\alpha}_t}$$ -->
 
 However, we don't know that noise, so we estimate it, and that's the part we are trying to learn, and make it closer to the real mean. Here's a nice trick:
 
+```math
 $$\mu_{\theta}(x_t, t) = \frac{1}{\sqrt{1 - \beta_t}}(x_t - \frac{\beta_t}{\sqrt{1 - \bar{\alpha}_t}} \epsilon_{\theta}(x_t, t))$$
+```
 
 So, instead of directly estimating the mean, we estimate the noise, that generates the mean. 
 
