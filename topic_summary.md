@@ -23,7 +23,7 @@ Diffusion has two main processes:
 * **Forward diffusion:** Gradually adds niose to the input
 * **Reverse denoising:** Learns to generate the data with denoising
 <figure>
-<img src="diffusion_process_overview.png" alt="" width="100%" />
+<img src="denoising_example.png" alt="https://developer.nvidia.com/blog/improving-diffusion-models-as-an-alternative-to-gans-part-1/" width="100%" />
 <figcaption style="text-align: center">Figure 2: Diffusion Process Overview</figcaption>
 </figure>
 
@@ -35,15 +35,14 @@ Diffusion has two main processes:
 
 You can view diffusion as following. The main goal is to convert complex distribution into a simpler target distribution by means of transition kernel $T$.
 
-
-$x_0 \sim p_{complex} \to T(x_0)\sim p_{prior}$
+$$x_0 \sim p_{complex} \to T(x_0)\sim p_{prior}$$
 
 **Explanation:** $p_{complex}$ refers to the target data distribution. Which sis referred as complex because the distribution is which we want to learn and be able to generate at the end. $p_{prior} $ refers to the simple distribution or you can wiew it as Gaussian Distribution. This is the distribution we get after applying transition kernel $T$. Below this transition kernel is referred as $q(x|x')$  as well.
 
 
 This kernels are modeled as repeated actions in diffusion. As you can see from the Figure 2, at each timestep $t_i$ model iteratively denoises the input. Thus at each timestep approaching to the target input distribution. How can we show that mathematically ?
 
-$p_{prior}(x) = \int q(x|x') p_ {prior}(x')dx'$
+$$p_{prior}(x) = \int q(x|x') p_ {prior}(x')dx'$$
 
 If transition kernel q has the above property, then repeatedly applying this kernel leads samples towards $p_{prior}$.
 
@@ -55,19 +54,19 @@ If transition kernel q has the above property, then repeatedly applying this ker
 
 However we are able to do this operation in discrete timesteps.
 
-$x_t \sim  q(x|x'= x_{t-1} ), \forall t>0$
+$$x_t \sim  q(x|x'= x_{t-1} ), \forall t>0$$
 
 *t* is finite and typically sufficent in practive.
 
 Because transition kernel is repeatedly applied we can see overall process as Markov chain.
 
-$q(X_t|X_{t-1}) = N(x_t; \sqrt{1-\beta_t} x_{t-1}, \beta_t I) $
+$$q(X_t|X_{t-1}) = N(x_t; \sqrt{1-\beta_t} x_{t-1}, \beta_t I) $$
 
-$q(X_T) = p_{prior}(X_T) = N(x_t; 0, I) $
+$$q(X_T) = p_{prior}(X_T) = N(x_t; 0, I) $$
 
 We are doing these iterative operations in order to iteratively denoise the samples. To be able to generate the data, we need reverse diffusion process. 
 
-$x_T \sim N(0,1) \to T^{-1}(x_T) \sim p_{data}$
+$$x_T \sim N(0,1) \to T^{-1}(x_T) \sim p_{data}$$
 
 Process $T^{-1}$ learns from the data. Below you can see a diffusion model that is trained to generate [3].
 
@@ -81,15 +80,15 @@ Process $T^{-1}$ learns from the data. Below you can see a diffusion model that 
 
 Forward diffusion process is fixed. Starting from data $x_0$, forward diffusion process adds noise to the data with variance $\beta_t$ 
 
-$q(X_t|X_{t-1}) = N(x_t; \sqrt{1-\beta_t} x_{t-1}, \beta_t I) \to q(x_{1:T}|x_0)=\prod_{t=1}q(X_t|x_{t-1})$ 
+$$q(X_t|X_{t-1}) = N(x_t; \sqrt{1-\beta_t} x_{t-1}, \beta_t I) \to q(x_{1:T}|x_0)=\prod_{t=1}q(X_t|x_{t-1})$$
 
 Using Gaussian's linearity over *t*, we can directly express $q(x_t|x_0)$ as a shortcut. We do not need to sample iteratively in forward process. Thus we can furhter speed up the training process.
 
 Define 
-$\bar{\alpha_t} = \prod_{s=1}^{t}(1-\beta_s) \to q(x_t|x_0) = N(x_t;\sqrt{\bar{\alpha}_t}x_0, (1-\bar{\alpha}_t)I)$
+$$\bar{\alpha_t} = \prod_{s=1}^{t}(1-\beta_s) \to q(x_t|x_0) = N(x_t;\sqrt{\bar{\alpha}_t}x_0, (1-\bar{\alpha}_t)I)$$
 
 Sample: 
-$ x_t = \sqrt{\bar{\alpha}_t}x_0+\sqrt{(1-\bar{\alpha}_t)}\epsilon$ where $\epsilon \sim N(0,1)$
+$$ x_t = \sqrt{\bar{\alpha}_t}x_0+\sqrt{(1-\bar{\alpha}_t)}\epsilon$ where $\epsilon \sim N(0,1)$$
 
 Because we can obtain $x_t$ from the $x_0$ the forward process is much faster this way.
 
@@ -126,9 +125,9 @@ Perceptual Quality: The specific pattern and magnitude of beta values can affect
 
 **What happens during forward diffusion process ?**
 
-![Distribution change during forward diffusion ](rick_histogram.png)
+![Distribution change during forward diffusion ](dist_change.png)
 
-$q(x_T) = \int q(x_0, x_t) = \int q(x_0) q(x_t | x_0) dx_0$
+$$q(x_T) = \int q(x_0, x_t) = \int q(x_0) q(x_t | x_0) dx_0$$
 
 We can sample $x_t \sim q(x_t)$ by first sampling $x_0 \sim q(x_0)$ and then sampling $x_t \sim q(x_t | x_0)$
 q  in the $x_t \sim q(x_t | x_0)$ is the transition kernel. This trick lets us directly making use of $q(x_t | x_0)$ term.
@@ -137,11 +136,11 @@ q  in the $x_t \sim q(x_t | x_0)$ is the transition kernel. This trick lets us d
 
 At this step the main goal is to denoise the $x_t$ so that at each time step we iteratively denoise the $x_t$ a bit. At the end, we will get rid of the noise and reach to original data $x_0$
 
-![alt text](diffusion_process_overview.png)
+![alt text](backward_diff.png)
 
-$p(x_T)=N(x_T;0,I)$
+$$p(x_T)=N(x_T;0,I)$$
 
-$p_\theta(x_{t-1}|x_t)=N(x_{t-1};\mu_\theta(x_t,t),\sigma^2_t I) \to p_\theta(x_{0:T}) = p(x_T) \prod_{t=1}^Tp_{\theta}(x_{t-1}|x_t)$ 
+$$p_\theta(x_{t-1}|x_t)=N(x_{t-1};\mu_\theta(x_t,t),\sigma^2_t I) \to p_\theta(x_{0:T}) = p(x_T) \prod_{t=1}^Tp_{\theta}(x_{t-1}|x_t)$$
 
 $\mu_\theta \to$ is a trainable network to estimate $p(x_{t-1}|x_t)$ This can be U-net like model or denoising autoencoder etc. 
 
@@ -162,7 +161,7 @@ Within forward diffusion, we often use Gaussian noise to add noise to the input.
 
 That ultimately leads to the following formula:
 
-$p_{data}(x_0: x_T) = p_{data}(x_0) \prod_{t=1}^{T} q(x_{t-1}|x_t)$
+$$p_{data}(x_0: x_T) = p_{data}(x_0) \prod_{t=1}^{T} q(x_{t-1}|x_t)$$
 
 However, the reverse transition kernel is not recoverable, because it's the true denoising distribution, which is also a function of the real data distribution, and we don't know that. This makes the reverse diffusion process intractable.
 
@@ -232,13 +231,13 @@ The term, $L_T$ can be ignored, as $q$ does not depend on model parameters and $
 
 Now, let's discuss $L_t$ term. It simply measures how far the predicted noise $p_{\theta}(x_{t-1}|x_t)$ is from the true noise $q(x_{t-1}|x_t, x_0)$. Luckily, $q(x_{t-1}|x_t, x_0)$ is a tractable distribution, which simply tries to model the "less nosiy" version by looking at the "current noisy" version and the "original" version, which we have access to. Another good thing about it is that, it actually is a Gaussian distribution.
 
-$$q(x_{t-1}|x_t, x_0) = N(x_{t-1}; \tilde{\mu}_{t}(x_t, x_0), \tilde{\beta}_{t}I)$$
+$$q(x_{t-1}|x_t, x_0) = N(x_{t-1}; \tilde{\mu}_{t}(x_t, x_0), \tilde{\beta}_t I)$$
 
 where $\tilde{\mu}(x_t, x_0)$ is the weighted average of the current noisy version and the original version, and $\beta_t$ is the variance of the noise.
 
 As both $q(x_{t-1}|x_t, x_0)$ and $p_{\theta}(x_{t-1}|x_t)$ are Gaussian distributions, we can calculate the KL divergence between them analytically:
 
-$$D_{KL}(q(x_{t-1}|x_t, x_0)||p_{\theta}(x_{t-1}|x_t)) = E_q[\frac{1}{2\sigma_t^2}||\tilde{\mu}_{t}(x_t, x_0) - \mu_{\theta}(x_t,t)||^2 + C$$
+$$D_{KL}(q(x_{t-1}|x_t, x_0)||p_{\theta}(x_{t-1}|x_t)) = E_q[\frac{1}{2\sigma_t^2}||\tilde{\mu}_{t}(x_t, x_0) - \mu_{\theta}(x_t,t)||^2] + C$$
 
 Where C is a constant term that does not depend on the model parameters, and $\tilde{\mu}_{t}(x_t, x_0)$ is the weighted average of the current noisy version and the original version, which is calculated as:
 
