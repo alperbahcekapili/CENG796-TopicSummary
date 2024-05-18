@@ -3,10 +3,10 @@
 
 
 <figure>
-<img src="intro_image_1.png" alt="drawing" width="20%"/>
-<img src="intro_image_2.png" alt="drawing" width="20%"/>
-<img src="intro_image_3.png" alt="drawing" width="20%"/>
-<img src="biz.jpeg" alt="drawing" width="20%"/>
+<img src="files/intro_image_1.png" alt="drawing" width="20%"/>
+<img src="files/intro_image_2.png" alt="drawing" width="20%"/>
+<img src="files/intro_image_3.png" alt="drawing" width="20%"/>
+<img src="files/biz.jpeg" alt="drawing" width="20%"/>
 
 <figcaption style="text-align: center">Figure 1: Generation Examples</figcaption>
 </figure>
@@ -25,7 +25,7 @@ Diffusion has two main processes:
 * **Forward diffusion:** Gradually adds niose to the input
 * **Reverse denoising:** Learns to generate the data with denoising
 <figure>
-<img src="rick_annotated.png" alt="" width="100%" />
+<img src="files/rick_annotated.png" alt="" width="100%" />
 <figcaption style="text-align: center">Figure 2: Diffusion Process Overview</figcaption>
 </figure>
 
@@ -69,7 +69,7 @@ $$x_T \sim N(0,1) \to T^{-1}(x_T) \sim p_{data}$$
 Process $T^{-1}$ learns from the data. Below you can see a diffusion model that is trained to generate MNIST data [3].
 
 <figure>
-<img src="mnist.gif" alt="Our custom generation" width="99%">
+<img src="files/mnist.gif" alt="Our custom generation" width="99%">
 <figcaption style="text-align: center">Figure 3: MNIST dataset Diffusion Example</figcaption>
 </figure>
 
@@ -126,7 +126,7 @@ Perceptual Quality: The specific pattern and magnitude of beta values can affect
 
 
 <figure>
-<img src="rick_histogram.png" alt="" width="100%" />
+<img src="files/rick_histogram.png" alt="" width="100%" />
 <figcaption style="text-align: center">Figure 4: Distribution change during forward diffusion</figcaption>
 </figure>
 
@@ -141,7 +141,7 @@ q  in the $x_t \sim q(x_t | x_0)$ is the transition kernel. This trick lets us d
 At this step the main goal is to denoise the $x_t$ so that at each time step we iteratively denoise the $x_t$ a bit. At the end, we will get rid of the noise and reach to original data $x_0$
 
 <figure>
-<img src="rick_annotated.png" alt="" width="100%" />
+<img src="files/rick_annotated.png" alt="" width="100%" />
 <figcaption style="text-align: center">Figure 5: Diffusion Process Overview</figcaption>
 </figure>
 
@@ -310,7 +310,7 @@ There are a lot of diffusion models out there. Denoising diffusion probabilistic
 
 
 <figure>
-<img src="dalle3.png" alt="https://openai.com/index/dall-e-3/" width="100%" />
+<img src="files/dalle3.png" alt="https://openai.com/index/dall-e-3/" width="100%" />
 <figcaption style="text-align: center">Figure 6: DALL-E Generated Image</figcaption>
 </figure>
 
@@ -331,7 +331,7 @@ DALL-E 3 generates higher resolution images with more detail and fewer artifacts
 ## Stable Diffusion
 
 <figure>
-<img src="stable_diff.jpeg" alt="https://www.diffus.me/2023/10/24/protovisionxl_0-6-2-0-fp16-ai-art-image-neo-rococo-retro-themed-illus-2/" width="100%" />
+<img src="files/stable_diff.jpeg" alt="https://www.diffus.me/2023/10/24/protovisionxl_0-6-2-0-fp16-ai-art-image-neo-rococo-retro-themed-illus-2/" width="100%" />
 <figcaption style="text-align: center">Figure 7: Stable Diffusion Generated Image</figcaption>
 </figure>
 
@@ -352,7 +352,7 @@ We have been using Gaussian noise to add noise to the data in the forward diffus
 
 
 <figure>
-<img src="rick_processed.png" alt="" />
+<img src="files/rick_processed.png" alt="" />
 
 <figcaption style="text-align: center">Figure 8: Content-Detail Tradeoff</figcaption>
 </figure>
