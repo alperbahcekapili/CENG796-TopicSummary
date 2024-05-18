@@ -23,7 +23,7 @@ Diffusion has two main processes:
 * **Forward diffusion:** Gradually adds niose to the input
 * **Reverse denoising:** Learns to generate the data with denoising
 <figure>
-<img src="denoising_example.png" alt="https://developer.nvidia.com/blog/improving-diffusion-models-as-an-alternative-to-gans-part-1/" width="100%" />
+<img src="rick_annotated.png" alt="" width="100%" />
 <figcaption style="text-align: center">Figure 2: Diffusion Process Overview</figcaption>
 </figure>
 
@@ -68,7 +68,7 @@ We are doing these iterative operations in order to iteratively denoise the samp
 
 $$x_T \sim N(0,1) \to T^{-1}(x_T) \sim p_{data}$$
 
-Process $T^{-1}$ learns from the data. Below you can see a diffusion model that is trained to generate [3].
+Process $T^{-1}$ learns from the data. Below you can see a diffusion model that is trained to generate MNIST data [3].
 
 <figure>
 <img src="mnist.gif" alt="Our custom generation" width="99%">
@@ -125,7 +125,12 @@ Perceptual Quality: The specific pattern and magnitude of beta values can affect
 
 **What happens during forward diffusion process ?**
 
-![Distribution change during forward diffusion ](dist_change.png)
+
+<figure>
+<img src="rick_histogram.png" alt="https://openai.com/index/dall-e-3/" width="100%" />
+<figcaption style="text-align: center">Figure 5: Distribution change during forward diffusion</figcaption>
+</figure>
+
 
 $$q(x_T) = \int q(x_0, x_t) = \int q(x_0) q(x_t | x_0) dx_0$$
 
@@ -136,7 +141,12 @@ q  in the $x_t \sim q(x_t | x_0)$ is the transition kernel. This trick lets us d
 
 At this step the main goal is to denoise the $x_t$ so that at each time step we iteratively denoise the $x_t$ a bit. At the end, we will get rid of the noise and reach to original data $x_0$
 
-![alt text](backward_diff.png)
+<figure>
+<img src="rick_annotated.png" alt="https://openai.com/index/dall-e-3/" width="100%" />
+<figcaption style="text-align: center">Figure 6: Diffusion Process Overview</figcaption>
+</figure>
+
+
 
 $$p(x_T)=N(x_T;0,I)$$
 
@@ -295,7 +305,7 @@ There are a lot of diffusion models out there. Denoising diffusion probabilistic
 
 <figure>
 <img src="dalle3.png" alt="https://openai.com/index/dall-e-3/" width="100%" />
-<figcaption style="text-align: center">Figure 5: DALL-E Generated Image</figcaption>
+<figcaption style="text-align: center">Figure 7: DALL-E Generated Image</figcaption>
 </figure>
 
 Original name of the paper is [
@@ -315,8 +325,8 @@ DALL-E 3 generates higher resolution images with more detail and fewer artifacts
 ## Stable Diffusion
 
 <figure>
-<img src="stable_diffusion.png" alt="https://www.diffus.me/2023/10/24/protovisionxl_0-6-2-0-fp16-ai-art-image-neo-rococo-retro-themed-illus-2/" width="100%" />
-<figcaption style="text-align: center">Figure 6: Stable Diffusion Generated Image</figcaption>
+<img src="stable_diff.jpeg" alt="https://www.diffus.me/2023/10/24/protovisionxl_0-6-2-0-fp16-ai-art-image-neo-rococo-retro-themed-illus-2/" width="100%" />
+<figcaption style="text-align: center">Figure 8: Stable Diffusion Generated Image</figcaption>
 </figure>
 
 
@@ -331,7 +341,7 @@ Stable Diffusion, developed by Stability AI, is a powerful text-to-image generat
 
 <figure>
 <img src="midjourney.png" alt="https://www.midjourney.com/jobs/51d66f29-0341-402b-88a5-bb8ee872fd0d?index=0" width="100%" />
-<figcaption style="text-align: center">Figure 7: MidJourney Generated Image</figcaption>
+<figcaption style="text-align: center">Figure 9: MidJourney Generated Image</figcaption>
 </figure>
 
 MidJourney is also a Latent Diffusion Model, however Midjourney is tailored for high-fidelity, artistic image creation, often used by creatives and designers. Stable Diffusion, while also capable of generating high-quality images, is more focused on being a broadly applicable, efficient tool suitable for various applications, including research and commercial use.
