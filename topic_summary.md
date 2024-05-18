@@ -23,7 +23,7 @@ Diffusion has two main processes:
 * **Forward diffusion:** Gradually adds niose to the input
 * **Reverse denoising:** Learns to generate the data with denoising
 <figure>
-<img src="denoising_example.png" alt="https://developer.nvidia.com/blog/improving-diffusion-models-as-an-alternative-to-gans-part-1/" width="100%" />
+<img src="diffusion_process_overview.png" alt="" width="100%" />
 <figcaption style="text-align: center">Figure 2: Diffusion Process Overview</figcaption>
 </figure>
 
@@ -126,7 +126,7 @@ Perceptual Quality: The specific pattern and magnitude of beta values can affect
 
 **What happens during forward diffusion process ?**
 
-![Distribution change during forward diffusion ](dist_change.png)
+![Distribution change during forward diffusion ](rick_histogram.png)
 
 $q(x_T) = \int q(x_0, x_t) = \int q(x_0) q(x_t | x_0) dx_0$
 
@@ -137,7 +137,7 @@ q  in the $x_t \sim q(x_t | x_0)$ is the transition kernel. This trick lets us d
 
 At this step the main goal is to denoise the $x_t$ so that at each time step we iteratively denoise the $x_t$ a bit. At the end, we will get rid of the noise and reach to original data $x_0$
 
-![alt text](backward_diff.png)
+![alt text](diffusion_process_overview.png)
 
 $p(x_T)=N(x_T;0,I)$
 
