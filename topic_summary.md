@@ -3,9 +3,11 @@
 
 
 <figure>
-<img src="intro_image_1.png" alt="drawing" width="30%"/>
-<img src="intro_image_2.png" alt="drawing" width="30%"/>
-<img src="intro_image_3.png" alt="drawing" width="30%"/>
+<img src="intro_image_1.png" alt="drawing" width="20%"/>
+<img src="intro_image_2.png" alt="drawing" width="20%"/>
+<img src="intro_image_3.png" alt="drawing" width="20%"/>
+<img src="biz.jpeg" alt="drawing" width="20%"/>
+
 <figcaption style="text-align: center">Figure 1: Generation Examples</figcaption>
 </figure>
 
