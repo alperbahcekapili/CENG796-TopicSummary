@@ -37,7 +37,7 @@ You can view diffusion as following. The main goal is to convert complex distrib
 
 $$x_0 \sim p_{complex} \to T(x_0)\sim p_{prior}$$
 
-**Explanation:** $p_{complex}$ refers to the target data distribution. Which sis referred as complex because the distribution is which we want to learn and be able to generate at the end. $p_{prior} $ refers to the simple distribution or you can wiew it as Gaussian Distribution. This is the distribution we get after applying transition kernel $T$. Below this transition kernel is referred as $q(x|x')$  as well.
+**Explanation:** $p_{complex}$ refers to the target data distribution. Which sis referred as complex because the distribution is which we want to learn and be able to generate at the end. $`p_{prior}`$ refers to the simple distribution or you can wiew it as Gaussian Distribution. This is the distribution we get after applying transition kernel $T$. Below this transition kernel is referred as $q(x|x')$  as well.
 
 
 This kernels are modeled as repeated actions in diffusion. As you can see from the Figure 2, at each timestep $t_i$ model iteratively denoises the input. Thus at each timestep approaching to the target input distribution. How can we show that mathematically ?
@@ -88,8 +88,9 @@ Define
 $$\bar{\alpha_t} = \prod_{s=1}^{t}(1-\beta_s) \to q(x_t|x_0) = N(x_t;\sqrt{\bar{\alpha}_t}x_0, (1-\bar{\alpha}_t)I)$$
 
 Sample: 
-$$ x_t = \sqrt{\bar{\alpha}_t}x_0+\sqrt{(1-\bar{\alpha}_t)}\epsilon$ where $\epsilon \sim N(0,1)$$
-
+```math
+x_t = \sqrt{\bar{\alpha}_t}x_0+\sqrt{(1-\bar{\alpha}_t)}\epsilon$ where $\epsilon \sim N(0,1)
+```
 Because we can obtain $x_t$ from the $x_0$ the forward process is much faster this way.
 
 <br>
@@ -127,7 +128,7 @@ Perceptual Quality: The specific pattern and magnitude of beta values can affect
 
 
 <figure>
-<img src="rick_histogram.png" alt="" width="100%" />
+<img src="rick_histogram.png" alt="https://openai.com/index/dall-e-3/" width="100%" />
 <figcaption style="text-align: center">Figure 5: Distribution change during forward diffusion</figcaption>
 </figure>
 
@@ -142,7 +143,7 @@ q  in the $x_t \sim q(x_t | x_0)$ is the transition kernel. This trick lets us d
 At this step the main goal is to denoise the $x_t$ so that at each time step we iteratively denoise the $x_t$ a bit. At the end, we will get rid of the noise and reach to original data $x_0$
 
 <figure>
-<img src="rick_annotated.png" alt="" width="100%" />
+<img src="rick_annotated.png" alt="https://openai.com/index/dall-e-3/" width="100%" />
 <figcaption style="text-align: center">Figure 6: Diffusion Process Overview</figcaption>
 </figure>
 
@@ -156,9 +157,11 @@ $\mu_\theta \to$ is a trainable network to estimate $p(x_{t-1}|x_t)$ This can be
 
 ! One important point to note is that network is shared across all time steps. So takes *t* (time step) as input as well.
 
-! As you recall $ \bar{\alpha_t}$ is defined as follows.: $ \bar{\alpha_t} = \prod_{s=1}^t(1-\beta_s)$. Because $\beta$ values can be predefined and learned troughout the training, $ \bar{\alpha_t}$ can be fixed or can be learned as well.
-
-
+! As you recall $`\bar{\alpha_t}`$ is defined as follows.: 
+```math
+\bar{\alpha_t} = \prod_{s=1}^t(1-\beta_s)
+```
+Because $`\beta`$ values can be predefined and learned troughout the training, $`\bar{\alpha_t}`$ can be fixed or can be learned as well.
 
 # Learning how to diffuse
 
@@ -255,7 +258,7 @@ Where C is a constant term that does not depend on the model parameters, and $\t
 ```math
 \tilde{\mu}_{t}(x_t, x_0) = \frac{\sqrt{\bar{\alpha}_t}x_0 * \beta_t}{1 - \bar{\alpha}_t}x_0 + \frac{\sqrt{1 - \beta_t}(1 - \bar{\alpha}_{t-1})}{1 - \bar{\alpha}_t}x_t
 ```
-Normally, we would like to optimize this as is, as this is the most straight-forward way. However, [5] has some better ideas. Since $x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1 - \bar{\alpha}_t}\epsilon$, we can simplify the equation as:
+Normally, we would like to optimize this as is, as this is the most straight-forward way. However, [1] has some better ideas. Since $x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1 - \bar{\alpha}_t}\epsilon$, we can simplify the equation as:
 
 ```math
 \tilde{\mu}_{t}(x_t, x_0) = \frac{1}{\sqrt{1 - \beta_t}}(x_t - \frac{\beta_t}{\sqrt{1 - \bar{\alpha}_t}} \epsilon)
@@ -278,7 +281,7 @@ $$L_t = E_q[||\epsilon - \epsilon_{\theta}(x_t, t)||^2]$$
 
 $$= E_{x_0 \sim q(x_0), \epsilon \sim N(0, I)}[||\epsilon - \epsilon_{\theta}(\sqrt{\bar{\alpha}_t}x_0 + \sqrt{1 - \bar{\alpha}_t} + \sqrt{1 - \bar{\alpha}_t}\epsilon, t)||^2]$$
 
-Note that, we omitted the scaling of the real noise, as it's been observed in [5] that it's not having those improves the sample quality.
+Note that, we omitted the scaling of the real noise, as it's been observed in [1] that it's not having those improves the sample quality.
 
 ## Putting everything together
 
@@ -369,7 +372,7 @@ As it can be seen from the image, the diffusion process first destroys the high 
 
 ## Noise Scheduling
 
-Adding noise at different timesteps, introduces some implicit mechanisms, just like the things we've just discussed within the content-detail tradeoff part. So, we lose different portions of the data, when applying the same noise at different timesteps, which also yields we can take different steps to recover them at each timestep. To do this, we can schedule the variance of the noise, $\beta_t$, to be different at each timestep. [7][8][9]
+Adding noise at different timesteps, introduces some implicit mechanisms, just like the things we've just discussed within the content-detail tradeoff part. So, we lose different portions of the data, when applying the same noise at different timesteps, which also yields we can take different steps to recover them at each timestep. To do this, we can schedule the variance of the noise, $\beta_t$, to be different at each timestep. [3][4][5]
 
 ## Network Architectures
 
@@ -379,8 +382,8 @@ What's can be altered is a matter of imagination. Here're some examples:
 
 - Different types of autoencoders [basically most of the diffusion papers]
 - Different layer types [basically most of the diffusion papers]
-- Representing input data(time, etc.) in a different way [10]
-- Conditioning the model with some other data or even modalities [11]-[14]
+- Representing input data(time, etc.) in a different way [6]
+- Conditioning the model with some other data or even modalities [7]-[10]
 
 # Citations
 
