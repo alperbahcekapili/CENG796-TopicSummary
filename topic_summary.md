@@ -46,10 +46,6 @@ $$p_{prior}(x) = \int q(x|x') p_ {prior}(x')dx'$$
 
 If transition kernel q has the above property, then repeatedly applying this kernel leads samples towards $p_{prior}$.
 
-<figure>
-<img src="diffusion_over_time.png" alt="https://ayandas.me/blogs/2021-12-04-diffusion-prob-models.html">
-<figcaption style="text-align: center">Figure 3: Diffusion Over Time</figcaption>
-</figure>
 
 
 However we are able to do this operation in discrete timesteps.
@@ -72,7 +68,7 @@ Process $T^{-1}$ learns from the data. Below you can see a diffusion model that 
 
 <figure>
 <img src="mnist.gif" alt="Our custom generation" width="99%">
-<figcaption style="text-align: center">Figure 4: MNIST dataset Diffusion Example</figcaption>
+<figcaption style="text-align: center">Figure 3: MNIST dataset Diffusion Example</figcaption>
 </figure>
 
 
@@ -129,7 +125,7 @@ Perceptual Quality: The specific pattern and magnitude of beta values can affect
 
 <figure>
 <img src="rick_histogram.png" alt="" width="100%" />
-<figcaption style="text-align: center">Figure 5: Distribution change during forward diffusion</figcaption>
+<figcaption style="text-align: center">Figure 4: Distribution change during forward diffusion</figcaption>
 </figure>
 
 
@@ -144,7 +140,7 @@ At this step the main goal is to denoise the $x_t$ so that at each time step we 
 
 <figure>
 <img src="rick_annotated.png" alt="" width="100%" />
-<figcaption style="text-align: center">Figure 6: Diffusion Process Overview</figcaption>
+<figcaption style="text-align: center">Figure 5: Diffusion Process Overview</figcaption>
 </figure>
 
 
@@ -313,7 +309,7 @@ There are a lot of diffusion models out there. Denoising diffusion probabilistic
 
 <figure>
 <img src="dalle3.png" alt="https://openai.com/index/dall-e-3/" width="100%" />
-<figcaption style="text-align: center">Figure 7: DALL-E Generated Image</figcaption>
+<figcaption style="text-align: center">Figure 6: DALL-E Generated Image</figcaption>
 </figure>
 
 Original name of the paper is [
@@ -334,7 +330,7 @@ DALL-E 3 generates higher resolution images with more detail and fewer artifacts
 
 <figure>
 <img src="stable_diff.jpeg" alt="https://www.diffus.me/2023/10/24/protovisionxl_0-6-2-0-fp16-ai-art-image-neo-rococo-retro-themed-illus-2/" width="100%" />
-<figcaption style="text-align: center">Figure 8: Stable Diffusion Generated Image</figcaption>
+<figcaption style="text-align: center">Figure 7: Stable Diffusion Generated Image</figcaption>
 </figure>
 
 
