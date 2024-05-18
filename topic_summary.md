@@ -89,9 +89,9 @@ $$\bar{\alpha_t} = \prod_{s=1}^{t}(1-\beta_s) \to q(x_t|x_0) = N(x_t;\sqrt{\bar{
 
 Sample: 
 ```math
-x_t = \sqrt{\bar{\alpha}_t}x_0+\sqrt{(1-\bar{\alpha}_t)}\epsilon$ where $\epsilon \sim N(0,1)
+x_t = \sqrt{\bar{\alpha}_t}x_0+\sqrt{(1-\bar{\alpha}_t)}\epsilon
 ```
-Because we can obtain $x_t$ from the $x_0$ the forward process is much faster this way.
+where $`\epsilon \sim N(0,1)`$. Because we can obtain $x_t$ from the $x_0$ the forward process is much faster this way.
 
 <br>
 
