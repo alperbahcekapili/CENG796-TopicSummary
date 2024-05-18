@@ -344,20 +344,6 @@ Latest stable diffusion 3 paper: [here](https://stability.ai/news/stable-diffusi
 Stable Diffusion, developed by Stability AI, is a powerful text-to-image generative model. It operates using Latent Diffusion Models (LDMs), where the diffusion process occurs in a lower-dimensional latent space rather than directly in the pixel space. This method enhances computational efficiency and scalability, enabling the generation of high-resolution images quickly and effectively. Applications range from digital art and design to healthcare and education, making it a versatile tool in various industries. However, challenges such as maintaining image consistency and addressing data biases remain key areas for ongoing research and improvement
 
 
-
-## MidJourney
-
-<figure>
-<img src="midjourney.png" alt="https://www.midjourney.com/jobs/51d66f29-0341-402b-88a5-bb8ee872fd0d?index=0" width="100%" />
-<figcaption style="text-align: center">Figure 9: MidJourney Generated Image</figcaption>
-</figure>
-
-MidJourney is also a Latent Diffusion Model, however Midjourney is tailored for high-fidelity, artistic image creation, often used by creatives and designers. Stable Diffusion, while also capable of generating high-quality images, is more focused on being a broadly applicable, efficient tool suitable for various applications, including research and commercial use.
-
-
-
-
-
 # Discussions
 
 ## Other type of noises
