@@ -10,7 +10,7 @@
 </figure>
 
 
-Nowadays generative AI is a very hot topic. Of course in preivious years generative AI was being studied in various works starting from 1970s: [1](https://www.jstor.org/stable/2239727?casa_token=JXT7d48sjqcAAAAA%3A1v-RMEHVDGW_ClpSb1-z91QQczDEKSKMEu6yhb5ec_xxpSgY8jOot2XfEh1MhxMRMKPExyau3vFDL0a2ekW_iRZFvf3TA3tmCKqpq16rTNsYoa-geHZ47Q)[2](https://ieeexplore.ieee.org/document/6302930).  Even tough these foundational research papers are very important and valueable, Generative AI started to be a part of our daily lives especially after [ChatGPT](https://chatgpt.com/) comes out in 2022. The company behind ChatGPT, OpenAI has been working on these technologies beginning from 2015 which is the date when OpenAI is founded. ChatGPT is a generative model in text generation domain. Diffusion models are in image domain on the other hand. 
+Nowadays generative AI is a very hot topic. Of course in preivious years generative AI was being studied in various works starting from 1970s [1][2].  Even tough these foundational research papers are very important and valueable, Generative AI started to be a part of our daily lives especially after [ChatGPT](https://chatgpt.com/) comes out in 2022. The company behind ChatGPT, OpenAI has been working on these technologies beginning from 2015 which is the date when OpenAI is founded. ChatGPT is a generative model in text generation domain. Diffusion models are in image domain on the other hand. 
 
 
 
@@ -69,10 +69,10 @@ We are doing these iterative operations in order to iteratively denoise the samp
 
 $x_T \sim N(0,1) \to T^{-1}(x_T) \sim p_{data}$
 
-Process $T^{-1}$ learns from the data. Below you can see a diffusion model that is trained to generate [MNIST data](https://ieeexplore.ieee.org/document/726791).
+Process $T^{-1}$ learns from the data. Below you can see a diffusion model that is trained to generate [3].
 
 <figure>
-<img src="mnist.giff" alt="Our custom generation" width="99%">
+<img src="mnist.gif" alt="Our custom generation" width="99%">
 <figcaption style="text-align: center">Figure 4: MNIST dataset Diffusion Example</figcaption>
 </figure>
 
@@ -98,10 +98,8 @@ Because we can obtain $x_t$ from the $x_0$ the forward process is much faster th
 
 There are multiple approaches that one can follow. Some of them are as following:
 
-* Linearly schedule $\beta$ values from $\beta_1=10^{-4}$ to $\beta_T=0.02$ [Denoising Diffusion Probabilistic Models
-](https://arxiv.org/abs/2006.11239)
-* Learn $\beta$ values together with the model [Sohl-Dickstein, Jascha, et al. "Deep unsupervised learning using nonequilibrium thermodynamics." International conference on machine learning. PMLR, 2015.](https://proceedings.mlr.press/v37/sohl-dickstein15.html).
-
+* Linearly schedule $\beta$ values from $\beta_1=10^{-4}$ to $\beta_T=0.02$ [4]
+* Learn $\beta$ values together with the model [5]
 
 **What are $\beta$ values and why are they used ?**
 
@@ -203,7 +201,7 @@ $$q(x_{t-1}|x_t, x_0) = N(x_{t-1}; \mu_{\theta}(x_t, x_0), \sigma_{t}I)$$
 
 So, we need to optimize this:
 
-$$E_{q(x_0)}[-logp_{\theta}(x_0)]$$
+$E_{q(x_0)}[-logp_{\theta}(x_0)]$
 
 which is again, intractable. It's basically a log likelihood of our trainable model, which we don't have any access. We can use the variational upper bound to approximate this:
 
@@ -346,7 +344,7 @@ MidJourney is also a Latent Diffusion Model, however Midjourney is tailored for 
 
 ## Other type of noises
 
-We have been using Gaussian noise to add noise to the data in the forward diffusion process, which relies heavily on variational inference. However, models like Cold Diffusion [2] have shown that we can use other types of noise; even the deterministic degredations like blur, masking, etc. can be employed.
+We have been using Gaussian noise to add noise to the data in the forward diffusion process, which relies heavily on variational inference. However, models like Cold Diffusion [6] have shown that we can use other types of noise; even the deterministic degredations like blur, masking, etc. can be employed.
 
 ## Content-Detail Tradeoff
 
@@ -370,22 +368,31 @@ What's can be altered is a matter of imagination. Here're some examples:
 - Conditioning the model with some other data or even modalities [7]-[10]
 
 # Citations
-[1] J. Ho, A. Jain, and P. Abbeel, “Denoising diffusion probabilistic models,” arXiv (Cornell University), Jan. 2020, doi: 10.48550/arxiv.2006.11239.
 
-[2] A. Bansal et al., “Cold diffusion: inverting arbitrary image transforms without noise,” arXiv (Cornell University), Jan. 2022, doi: 10.48550/arxiv.2208.09392.
+[1] L. E. Baum, T. Petrie, G. Soules, and N. Weiss, “A maximization technique occurring in the statistical analysis of probabilistic functions of Markov chains,” Annals of Mathematical Statistics, vol. 41, no. 1, pp. 164–171, Feb. 1970, doi: 10.1214/aoms/1177697196.
 
-[3] D. P. Kingma, T. Salimans, B. Poole, and J. Ho, “Variational diffusion models,” arXiv (Cornell University), Jan. 2021, doi: 10.48550/arxiv.2107.00630.
+[2] G. E. Hinton and T. J. Sejnowski, “Learning and relearning in Boltzmann machines,” in The MIT Press eBooks, 2001, pp. 45–76. doi: 10.7551/mitpress/3349.003.0005.
 
-[4] A. Q. Nichol and P. Dhariwal, “Improved denoising diffusion probabilistic models,” arXiv (Cornell University), Jan. 2021, doi: 10.48550/arxiv.2102.09672.
+[3] Y. Lecun, L. Bottou, Y. Bengio, and P. Haffner, “Gradient-based learning applied to document recognition,” Proceedings of the IEEE, vol. 86, no. 11, pp. 2278–2324, Jan. 1998, doi: 10.1109/5.726791.
 
-[5] F. Bao, C. Li, J. Zhu, and B. Zhang, “Analytic-DPM: an Analytic Estimate of the Optimal Reverse Variance in Diffusion Probabilistic Models,” arXiv (Cornell University), Jan. 2022, doi: 10.48550/arxiv.2201.06503.
+[4] J. Ho, A. Jain, and P. Abbeel, “Denoising diffusion probabilistic models,” arXiv (Cornell University), Jan. 2020, doi: 10.48550/arxiv.2006.11239.
 
-[6] P. Dhariwal and A. Nichol, “Diffusion models beat GANs on image synthesis,” arXiv (Cornell University), Jan. 2021, doi: 10.48550/arxiv.2105.05233.
+[5] J. Sohl-Dickstein, E. Weiss, N. Maheswaranathan, and S. Ganguli, “Deep Unsupervised Learning using Nonequilibrium Thermodynamics,” Deep Unsupervised Learning Using Nonequilibrium Thermodynamics. Proceedings of the 32nd International Conference on Machine Learning, pp. 2256–2265, Jul. 2015, [Online]. Available: http://ganguli-gang.stanford.edu/pdf/DeepUnsupDiffusion.pdf
 
-[7] R. Rombach, A. Blattmann, D. Lorenz, P. Esser, and B. Ommer, “High-Resolution Image Synthesis with Latent Diffusion Models,” arXiv (Cornell University), Jan. 2021, doi: 10.48550/arxiv.2112.10752.
+[6] A. Bansal et al., “Cold diffusion: inverting arbitrary image transforms without noise,” arXiv (Cornell University), Jan. 2022, doi: 10.48550/arxiv.2208.09392.
 
-[8] L. Zhang and M. Agrawala, “Adding conditional control to Text-to-Image diffusion models,” arXiv (Cornell University), Jan. 2023, doi: 10.48550/arxiv.2302.05543.
+[7] D. P. Kingma, T. Salimans, B. Poole, and J. Ho, “Variational diffusion models,” arXiv (Cornell University), Jan. 2021, doi: 10.48550/arxiv.2107.00630.
 
-[9] C. Mou et al., “T2I-Adapter: Learning Adapters to Dig out More Controllable Ability for Text-to-Image Diffusion Models,” arXiv (Cornell University), Jan. 2023, doi: 10.48550/arxiv.2302.08453.
+[8] A. Q. Nichol and P. Dhariwal, “Improved denoising diffusion probabilistic models,” arXiv (Cornell University), Jan. 2021, doi: 10.48550/arxiv.2102.09672.
 
-[10] X. Hu, R. Wang, Y. Fang, B. Fu, P. Cheng, and G. Yu, “ELLA: Equip Diffusion Models with LLM for Enhanced Semantic Alignment,” arXiv (Cornell University), Mar. 2024, doi: 10.48550/arxiv.2403.05135.
+[9] F. Bao, C. Li, J. Zhu, and B. Zhang, “Analytic-DPM: an Analytic Estimate of the Optimal Reverse Variance in Diffusion Probabilistic Models,” arXiv (Cornell University), Jan. 2022, doi: 10.48550/arxiv.2201.06503.
+
+[10] P. Dhariwal and A. Nichol, “Diffusion models beat GANs on image synthesis,” arXiv (Cornell University), Jan. 2021, doi: 10.48550/arxiv.2105.05233.
+
+[11] R. Rombach, A. Blattmann, D. Lorenz, P. Esser, and B. Ommer, “High-Resolution Image Synthesis with Latent Diffusion Models,” arXiv (Cornell University), Jan. 2021, doi: 10.48550/arxiv.2112.10752.
+
+[12] L. Zhang and M. Agrawala, “Adding conditional control to Text-to-Image diffusion models,” arXiv (Cornell University), Jan. 2023, doi: 10.48550/arxiv.2302.05543.
+
+[13] C. Mou et al., “T2I-Adapter: Learning Adapters to Dig out More Controllable Ability for Text-to-Image Diffusion Models,” arXiv (Cornell University), Jan. 2023, doi: 10.48550/arxiv.2302.08453.
+
+[14] X. Hu, R. Wang, Y. Fang, B. Fu, P. Cheng, and G. Yu, “ELLA: Equip Diffusion Models with LLM for Enhanced Semantic Alignment,” arXiv (Cornell University), Mar. 2024, doi: 10.48550/arxiv.2403.05135.
