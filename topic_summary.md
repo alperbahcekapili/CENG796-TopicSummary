@@ -130,7 +130,7 @@ $\mu_\theta \to$ is a trainable network to estimate $p(x_{t-1}|x_t)$ This can be
 
 Within forward diffusion, we often use Gaussian noise to add noise to the input. However, in reverse diffusion, we need to learn the noise distribution. This is a challenging task because the noise distribution is not known. Let's remember the reverse diffusion process:
 
-1. We start with a sample $x_T$ from the noise distribution $q(x_T) = N(x_T; 0, I)$
+1. We start with a sample $x_T$ from the noise distribution $p(x_T) = N(x_T; 0, I)$
 2. We apply the reverse diffusion process by applying the reverse transition kernel $q(x_{t-1}|x_t)$ to the sample $x_T$ to get $x_{T-1}$
 
 That ultimately leads to the following formula:
@@ -145,15 +145,13 @@ To make the reverse diffusion process tractable, we need to approximate the reve
 
 As we already know the noise distribution is Gaussian, we only need to learn the mean and variance of the noise distribution at each time step. This is done by training a neural network to predict the mean and variance of the noise distribution at each time step, which yields:
 
-$q(x_{t-1}|x_{t:T}) = N(x_{t-1}; \mu_{\theta}(x_{t:T}), \sigma_{\theta}(x_{t:T})I)$
+$$q(x_{t-1}|x_{t:T}) = N(x_{t-1}; \mu_{\theta}(x_{t:T}), \sigma_{\theta}(x_{t:T})I)$$
 
 We are doing some redundant calculations here, because we are predicting the mean and variance of the noise distribution at each time step. 
 
 **RECALL**: We were delibaretly adding noise to the input at each time step with scheduled variance. So, we may choose to obtain it from the schedule directly.
 
-$q(x_{t-1}|x_{t:T}) = N(x_{t-1}; \mu_{\theta}(x_{t:T}), \sigma_{t}I)$
-
-**For the sake of generality, we will be using $\sigma_{t}$ notation in the rest of the document.** 
+$$q(x_{t-1}|x_{t:T}) = N(x_{t-1}; \mu_{\theta}(x_{t:T}), \sigma_{t}I)$$
 
 2. **Assumption 2: Noise is Independent:** We assume that the noise at each time step is independent. This assumption simplifies the reverse diffusion process because we can learn the noise distribution at each time step independently. This is also known as the Markovian assumption. 
 
@@ -161,11 +159,108 @@ $q(x_{t-1}|x_{t:T}) = N(x_{t-1}; \mu_{\theta}(x_{t:T}), \sigma_{t}I)$
 
 Markovian assumption yields:
 
-$q(x_{t-1}|x_{t}) = N(x_{t-1}; \mu_{\theta}(x_{t}), \sigma_{t}I)$
+$$q(x_{t-1}|x_{t}) = N(x_{t-1}; \mu_{\theta}(x_{t}), \sigma_{t}I)$$
 
 In the end, we can approximate the data distribution by applying the reverse diffusion process with the approximated reverse transition kernel:
 
-$q(x_{0:T}) = p_{data}(x_0) \prod_{t=1}^{T} q(x_{t-1}|x_t)$
+$$q(x_{0:T}) = p_{data}(x_0) \prod_{t=1}^{T} q(x_{t-1}|x_t)$$
 
+In a sense, we made it tractable by using an estimator. However, estimator cannot be trained directly, as timesteps still depend on the earlier timesteps. It's useful for the, wait for it, estimation part, which is essentially the inference part. This takes us back to the ground zero: intractable reverse diffusion (for training).
 
+## Variational Upper Bound
 
+So, we still need to calculate the $q(x_{t-1}|x_t)$, which is intractable. To overcome this, we can use a variational upper bound. The variational upper bound is a way to approximate the intractable posterior distribution with a simpler distribution. We can introduce another condition to make it tractable.
+
+$$q(x_{t-1}|x_t, x_0) = N(x_{t-1}; \mu_{\theta}(x_t, x_0), \sigma_{t}I)$$
+
+So, we need to optimize this:
+
+$$E_{q(x_0)}[-logp_{\theta}(x_0)]$$
+
+which is again, intractable. It's basically a log likelihood of our trainable model, which we don't have any access. We can use the variational upper bound to approximate this:
+
+$$E_{q(x_0)}[-\log p_{\theta}(x_0)] \leq E_{q(x_0)q(x_{1:T}|x_0)}[-\log \frac{p_{\theta}(x_{0:T})}{q(x_{1:T}|x_0)}]$$
+
+Now, let's break this down:
+
+$$= E_q[log \frac{q(x_{1:T}|x_0)}{p_{\theta}(x_{0:T})}]$$
+$$= E_q[log \frac{\prod_{t=1}^{T}q(x_{t}|x_{t-1})}{p_{\theta}({x_t})\prod_{t=1}^{T}p_{\theta}(x_{t-1}|x_t)}]$$
+$$= E_q[\sum_{t=1}^{T}log \frac{q(x_{t}|x_{t-1})}{p_{\theta}(x_{t})p_{\theta}(x_{t-1}|x_t)} - log p_{\theta}(x_T)]$$
+$$= E_q[log \frac{q(x_{1}|x_{0})}{p_{\theta}(x_{0}|x_1)} + \sum_{t=2}^{T}log \frac{q(x_{t-1}|x_{t}, x_0)}{p_{\theta}(x_{t-1}|x_t)} + log \frac{q(x_T|x_0)}{p_q(x_1|x_0)} - log p_{\theta}(x_T)]$$
+$$= E_q[-log p_{\theta}(x_0|x_1) - \sum_{t=2}^{T} log \frac{q(x_{t-1}|x_t, x_0)}{p_{\theta}(x_{t-1}|x_t)} + log \frac{q(x_T|x_0)}{p_{\theta}(x_T)}]$$
+
+Each term in the expectation is actually corresponds to different, reducable terms:
+
+Let:
+
+$$L_0 = E_q[-log p_{\theta}(x_0|x_1)]$$
+$$L_t = D_{KL}(q(x_{t-1}|x_t, x_0)||p_{\theta}(x_{t-1}|x_t))$$
+$$L_T = D_{KL}(q(x_T|x_0)||p_{\theta}(x_T))$$
+
+Then, we can write the variational upper bound as:
+
+$$E_q[L_0 + \sum_{t=2}^{T}L_t + L_T]$$
+
+The term, L_T can be ignored, as $q$ does not depend on model parameters and $p_{\theta}(x_T)$ is just a Gaussian noise. You can think of it as it only shows the q distribution, at the end of the diffusion process, which is only a Gaussian distribution, which is not a thing to learn.
+
+Now, let's discuss $L_t$ term. It simply measures how far the predicted noise $p_{\theta}(x_{t-1}|x_t)$ is from the true noise $q(x_{t-1}|x_t, x_0)$. Luckily, $q(x_{t-1}|x_t, x_0)$ is a tractable distribution, which simply tries to model the "less nosiy" version by looking at the "current noisy" version and the "original" version, which we have access to. Another good thing about it is that, it actually is a Gaussian distribution.
+
+$$q(x_{t-1}|x_t, x_0) = N(x_{t-1}; \tilde{\mu}_{t}(x_t, x_0), \tilde{\beta}_{t}I)$$
+
+where $\tilde{\mu}(x_t, x_0)$ is the weighted average of the current noisy version and the original version, and $\beta_t$ is the variance of the noise.
+
+As both $q(x_{t-1}|x_t, x_0)$ and $p_{\theta}(x_{t-1}|x_t)$ are Gaussian distributions, we can calculate the KL divergence between them analytically:
+
+$$D_{KL}(q(x_{t-1}|x_t, x_0)||p_{\theta}(x_{t-1}|x_t)) = E_q[\frac{1}{2\sigma_t^2}||\tilde{\mu}_{t}(x_t, x_0) - \mu_{\theta}(x_t,t)||^2 + C$$
+
+Where C is a constant term that does not depend on the model parameters, and $\tilde{\mu}_{t}(x_t, x_0)$ is the weighted average of the current noisy version and the original version, which is calculated as:
+
+$$\tilde{\mu}_{t}(x_t, x_0) = \frac{\sqrt{\bar{\alpha}_t}x_0 * \beta_t}{1 - \bar{\alpha}_t}x_0 + \frac{\sqrt{1 - \beta_t}(1 - \bar{\alpha}_{t-1})}{1 - \bar{\alpha}_t}x_t$$
+
+Since $x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1 - \bar{\alpha}_t}\epsilon$, we can simplify the equation as:
+
+$$\tilde{\mu}_{t}(x_t, x_0) = \frac{1}{\sqrt{1 - \beta_t}}(x_t - \frac{\beta_t}{\sqrt{1 - \bar{\alpha}_t}} \epsilon)$$
+
+So, in another sense, we are substracting a scaled version of the noise ($\epsilon$) from the current noisy version to obtain the mean.
+
+<!-- $$\tilde{\beta}_{t} = \frac{1 - \bar{\alpha}_{t-1}}{1 - \bar{\alpha}_t}$$ -->
+
+However, we don't know that noise, so we estimate it, and that's the part we are trying to learn, and make it closer to the real mean. Here's a nice trick:
+
+$$\mu_{\theta}(x_t, t) = \frac{1}{\sqrt{1 - \beta_t}}(x_t - \frac{\beta_t}{\sqrt{1 - \bar{\alpha}_t}} \epsilon_{\theta}(x_t, t))$$
+
+So, instead of directly estimating the mean, we estimate the noise, that generates the mean. 
+
+Now, we can calculate the KL divergence between the two Gaussian distributions:
+
+$$L_t = E_q[||\epsilon - \epsilon_{\theta}(x_t, t)||^2]$$
+
+$$= E_{x_0 \sim q(x_0), \epsilon \sim N(0, I)}[||\epsilon - \epsilon_{\theta}(\sqrt{\bar{\alpha}_t}x_0 + \sqrt{1 - \bar{\alpha}_t} + \sqrt{1 - \bar{\alpha}_t}\epsilon, t)||^2]$$
+
+Note that, we omitted the scaling of the real noise, as it's been observed that it's not having those improves the sample quality.
+
+## Putting everything together
+
+By now, we have discussed the theoretical background of diffusion models, the forward and reverse diffusion processes, and how to make the reverse diffusion process tractable. We have also discussed the variational upper bound and how to calculate the KL divergence between the predicted noise and the true noise. Now, let's put everything together and discuss the training and inference algorithms for diffusion models.
+
+### Training algorithm:
+
+1. Sample a batch of data $x_0$ from the data distribution $q(x_0)$, $x_0 \sim q(x_0)$
+2. Sample time steps $t$ from uniform distribution, $t \sim U(1, T)$
+3. Apply noise to the data $x_0$ to get $x_t$, $x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1 - \bar{\alpha}_t}\epsilon$, $\epsilon \sim N(0, I)$
+4. Calculate the KL divergence between the predicted noise and the true noise, $L_t = E_q[||\epsilon - \epsilon_{\theta}(x_t, t)||^2]$
+5. Update the model parameters by minimizing the loss, $\theta = \theta - \alpha \nabla_{\theta}L_t$
+6. Repeat steps 1-5 for a number of iterations
+
+### Inference algorithm:
+1. Sample noise to start the reverse diffusion process, $X_T \sim N(0, I)$
+2. Apply the reverse diffusion process to get the data, $X_{t-1} = \mu_{\theta}(X_t, t) + \sigma_t \epsilon$, $\epsilon \sim N(0, I)$
+3. Repeat step 2 for a number of iterations until you get the original data $X_0$
+
+# Discussions
+
+## Other type of noises
+
+We have been using Gaussian noise to add noise to the data in the forward diffusion process, which relies heavily on variational inference. However, models like Cold Diffusion [cite] have shown that we can use other types of noise; even the deterministic degredations like blur, masking, etc. can be employed.
+
+## 
