@@ -263,4 +263,23 @@ By now, we have discussed the theoretical background of diffusion models, the fo
 
 We have been using Gaussian noise to add noise to the data in the forward diffusion process, which relies heavily on variational inference. However, models like Cold Diffusion [cite] have shown that we can use other types of noise; even the deterministic degredations like blur, masking, etc. can be employed.
 
-## 
+## Content-Detail Tradeoff
+
+!An image to here
+
+As it can be seen from the image, the diffusion process first destroys the high frequency content, and then the low frequency content. This is a tradeoff between the content and the details. The content is preserved, but the details are lost. So, the reverse diffusion process also attempts to do so, by first recovering the low frequency content, and then the high frequency content. So, the weighting of the loss terms should be carefully chosen for different time steps.
+
+## Noise Scheduling
+
+Adding noise at different timesteps, introduces some implicit mechanisms, just like the things we've just discussed within the content-detail tradeoff part. So, we lose different portions of the data, when applying the same noise at different timesteps, which also yields we can take different steps to recover them at each timestep. To do this, we can schedule the variance of the noise, $\beta_t$, to be different at each timestep. [cite]
+
+## Network Architectures
+
+Traditionally, we use autoencoders, or U-nets to model the noise distribution. How the model architecture can be altered is (and probably always will be) an open question. 
+
+What's can be altered is a matter of imagination. Here're some examples:
+
+- Different types of autoencoders [cite]
+- Different layer types [cite]
+- Representing input data(time, etc.) in a different way [cite]
+- Conditioning the model with some other data or even modalities [cite]
