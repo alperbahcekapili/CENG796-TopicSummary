@@ -201,7 +201,7 @@ Then, we can write the variational upper bound as:
 
 $$E_q[L_0 + \sum_{t=2}^{T}L_t + L_T]$$
 
-The term, L_T can be ignored, as $q$ does not depend on model parameters and $p_{\theta}(x_T)$ is just a Gaussian noise. You can think of it as it only shows the q distribution, at the end of the diffusion process, which is only a Gaussian distribution, which is not a thing to learn.
+The term, $L_T$ can be ignored, as $q$ does not depend on model parameters and $p_{\theta}(x_T)$ is just a Gaussian noise. You can think of it as it only shows the q distribution, at the end of the diffusion process, which is only a Gaussian distribution, which is not a thing to learn.
 
 Now, let's discuss $L_t$ term. It simply measures how far the predicted noise $p_{\theta}(x_{t-1}|x_t)$ is from the true noise $q(x_{t-1}|x_t, x_0)$. Luckily, $q(x_{t-1}|x_t, x_0)$ is a tractable distribution, which simply tries to model the "less nosiy" version by looking at the "current noisy" version and the "original" version, which we have access to. Another good thing about it is that, it actually is a Gaussian distribution.
 
@@ -217,7 +217,7 @@ Where C is a constant term that does not depend on the model parameters, and $\t
 
 $$\tilde{\mu}_{t}(x_t, x_0) = \frac{\sqrt{\bar{\alpha}_t}x_0 * \beta_t}{1 - \bar{\alpha}_t}x_0 + \frac{\sqrt{1 - \beta_t}(1 - \bar{\alpha}_{t-1})}{1 - \bar{\alpha}_t}x_t$$
 
-Since $x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1 - \bar{\alpha}_t}\epsilon$, we can simplify the equation as:
+Normally, we would like to optimize this as is, as this is the most straight-forward way. However, [1] has some better ideas. Since $x_t = \sqrt{\bar{\alpha}_t}x_0 + \sqrt{1 - \bar{\alpha}_t}\epsilon$, we can simplify the equation as:
 
 $$\tilde{\mu}_{t}(x_t, x_0) = \frac{1}{\sqrt{1 - \beta_t}}(x_t - \frac{\beta_t}{\sqrt{1 - \bar{\alpha}_t}} \epsilon)$$
 
@@ -237,7 +237,7 @@ $$L_t = E_q[||\epsilon - \epsilon_{\theta}(x_t, t)||^2]$$
 
 $$= E_{x_0 \sim q(x_0), \epsilon \sim N(0, I)}[||\epsilon - \epsilon_{\theta}(\sqrt{\bar{\alpha}_t}x_0 + \sqrt{1 - \bar{\alpha}_t} + \sqrt{1 - \bar{\alpha}_t}\epsilon, t)||^2]$$
 
-Note that, we omitted the scaling of the real noise, as it's been observed that it's not having those improves the sample quality.
+Note that, we omitted the scaling of the real noise, as it's been observed in [1] that it's not having those improves the sample quality.
 
 ## Putting everything together
 
@@ -261,7 +261,7 @@ By now, we have discussed the theoretical background of diffusion models, the fo
 
 ## Other type of noises
 
-We have been using Gaussian noise to add noise to the data in the forward diffusion process, which relies heavily on variational inference. However, models like Cold Diffusion [cite] have shown that we can use other types of noise; even the deterministic degredations like blur, masking, etc. can be employed.
+We have been using Gaussian noise to add noise to the data in the forward diffusion process, which relies heavily on variational inference. However, models like Cold Diffusion [2] have shown that we can use other types of noise; even the deterministic degredations like blur, masking, etc. can be employed.
 
 ## Content-Detail Tradeoff
 
@@ -271,7 +271,7 @@ As it can be seen from the image, the diffusion process first destroys the high 
 
 ## Noise Scheduling
 
-Adding noise at different timesteps, introduces some implicit mechanisms, just like the things we've just discussed within the content-detail tradeoff part. So, we lose different portions of the data, when applying the same noise at different timesteps, which also yields we can take different steps to recover them at each timestep. To do this, we can schedule the variance of the noise, $\beta_t$, to be different at each timestep. [cite]
+Adding noise at different timesteps, introduces some implicit mechanisms, just like the things we've just discussed within the content-detail tradeoff part. So, we lose different portions of the data, when applying the same noise at different timesteps, which also yields we can take different steps to recover them at each timestep. To do this, we can schedule the variance of the noise, $\beta_t$, to be different at each timestep. [3][4][5]
 
 ## Network Architectures
 
@@ -279,7 +279,28 @@ Traditionally, we use autoencoders, or U-nets to model the noise distribution. H
 
 What's can be altered is a matter of imagination. Here're some examples:
 
-- Different types of autoencoders [cite]
-- Different layer types [cite]
-- Representing input data(time, etc.) in a different way [cite]
-- Conditioning the model with some other data or even modalities [cite]
+- Different types of autoencoders [basically most of the diffusion papers]
+- Different layer types [basically most of the diffusion papers]
+- Representing input data(time, etc.) in a different way [6]
+- Conditioning the model with some other data or even modalities [7]-[10]
+
+# Citations
+[1] J. Ho, A. Jain, and P. Abbeel, “Denoising diffusion probabilistic models,” arXiv (Cornell University), Jan. 2020, doi: 10.48550/arxiv.2006.11239.
+
+[2] A. Bansal et al., “Cold diffusion: inverting arbitrary image transforms without noise,” arXiv (Cornell University), Jan. 2022, doi: 10.48550/arxiv.2208.09392.
+
+[3] D. P. Kingma, T. Salimans, B. Poole, and J. Ho, “Variational diffusion models,” arXiv (Cornell University), Jan. 2021, doi: 10.48550/arxiv.2107.00630.
+
+[4] A. Q. Nichol and P. Dhariwal, “Improved denoising diffusion probabilistic models,” arXiv (Cornell University), Jan. 2021, doi: 10.48550/arxiv.2102.09672.
+
+[5] F. Bao, C. Li, J. Zhu, and B. Zhang, “Analytic-DPM: an Analytic Estimate of the Optimal Reverse Variance in Diffusion Probabilistic Models,” arXiv (Cornell University), Jan. 2022, doi: 10.48550/arxiv.2201.06503.
+
+[6] P. Dhariwal and A. Nichol, “Diffusion models beat GANs on image synthesis,” arXiv (Cornell University), Jan. 2021, doi: 10.48550/arxiv.2105.05233.
+
+[7] R. Rombach, A. Blattmann, D. Lorenz, P. Esser, and B. Ommer, “High-Resolution Image Synthesis with Latent Diffusion Models,” arXiv (Cornell University), Jan. 2021, doi: 10.48550/arxiv.2112.10752.
+
+[8] L. Zhang and M. Agrawala, “Adding conditional control to Text-to-Image diffusion models,” arXiv (Cornell University), Jan. 2023, doi: 10.48550/arxiv.2302.05543.
+
+[9] C. Mou et al., “T2I-Adapter: Learning Adapters to Dig out More Controllable Ability for Text-to-Image Diffusion Models,” arXiv (Cornell University), Jan. 2023, doi: 10.48550/arxiv.2302.08453.
+
+[10] X. Hu, R. Wang, Y. Fang, B. Fu, P. Cheng, and G. Yu, “ELLA: Equip Diffusion Models with LLM for Enhanced Semantic Alignment,” arXiv (Cornell University), Mar. 2024, doi: 10.48550/arxiv.2403.05135.
