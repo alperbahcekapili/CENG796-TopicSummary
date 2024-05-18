@@ -69,3 +69,50 @@ Process $T^{-1}$ learns from the data
 <img src="revdiff.gif" alt="https://ayandas.me/blogs/2021-12-04-diffusion-prob-models.html" width="49%">
 <figcaption style="text-align: center">Figure 4: Forward and Backward Diffusion</figcaption>
 </figure>
+
+
+# Learning how to diffuse
+
+## Tractability of the Reverse Diffusion
+
+Within forward diffusion, we often use Gaussian noise to add noise to the input. However, in reverse diffusion, we need to learn the noise distribution. This is a challenging task because the noise distribution is not known. Let's remember the reverse diffusion process:
+
+1. We start with a sample $x_T$ from the noise distribution $q(x_T) = N(x_T; 0, I)$
+2. We apply the reverse diffusion process by applying the reverse transition kernel $q(x_{t-1}|x_t)$ to the sample $x_T$ to get $x_{T-1}$
+
+That ultimately leads to the following formula:
+
+$p_{data}(x_0: x_T) = p_{data}(x_0) \prod_{t=1}^{T} q(x_{t-1}|x_t)$
+
+However, the reverse transition kernel is not recoverable, because it's the true denoising distribution, which is also a function of the real data distribution, and we don't know that. This makes the reverse diffusion process intractable.
+
+To make the reverse diffusion process tractable, we need to approximate the reverse transition kernel. There are 2 main assumptions that make the reverse diffusion tractable:
+
+1. **Assumption 1: Noise is Gaussian:** We assume that the noise distribution is Gaussian, which is a common assumption in diffusion models. This assumption simplifies the reverse diffusion process because we can learn the noise distribution from the data. This is the main assumption that makes the reverse diffusion tractable. 
+
+As we already know the noise distribution is Gaussian, we only need to learn the mean and variance of the noise distribution at each time step. This is done by training a neural network to predict the mean and variance of the noise distribution at each time step, which yields:
+
+$q(x_{t-1}|x_{t:T}) = N(x_{t-1}; \mu_{\theta}(x_{t:T}), \sigma_{\theta}(x_{t:T})I)$
+
+We are doing some redundant calculations here, because we are predicting the mean and variance of the noise distribution at each time step. 
+
+**RECALL**: We were delibaretly adding noise to the input at each time step with scheduled variance. So, we may choose to obtain it from the schedule directly.
+
+$q(x_{t-1}|x_{t:T}) = N(x_{t-1}; \mu_{\theta}(x_{t:T}), \sigma_{t}I)$
+
+**For the sake of generality, we will be using $\sigma_{t}$ notation in the rest of the document.** 
+
+2. **Assumption 2: Noise is Independent:** We assume that the noise at each time step is independent. This assumption simplifies the reverse diffusion process because we can learn the noise distribution at each time step independently. This is also known as the Markovian assumption. 
+
+**It should be known that;** the process was already tractable since the first assumption, but, it's just hard to train all those parameters. Besides of that, as we recall from the forward diffusion process, we were adding noise to each timestep by sampling independently from the previous timesteps. By predicting the noise, instead of the resulting image, we can safely assume the markovian property.
+
+Markovian assumption yields:
+
+$q(x_{t-1}|x_{t}) = N(x_{t-1}; \mu_{\theta}(x_{t}), \sigma_{t}I)$
+
+In the end, we can approximate the data distribution by applying the reverse diffusion process with the approximated reverse transition kernel:
+
+$q(x_{0:T}) = p_{data}(x_0) \prod_{t=1}^{T} q(x_{t-1}|x_t)$
+
+
+
